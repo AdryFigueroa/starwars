@@ -1,6 +1,6 @@
 body {
   background-color: #000;
-  background-image: url(./assets/img/bg-star.png);
+  background-image: url(../img/bg-star.png);
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
