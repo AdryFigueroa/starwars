@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Personajes de Star Wars</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h1>Personajes de Star Wars</h1>
+      <div class="row">
+        <div class="col-md-4">
+          <div
+            class="seccion-personajes"
+            data-inicio="1"
+            data-fin="5"
+            data-seccion="1"
+          >
+            Personajes del 1 al 5
+          </div>
+          <div
+            class="seccion-personajes"
+            data-inicio="6"
+            data-fin="11"
+            data-seccion="2"
+          >
+            Personajes del 6 al 11
+          </div>
+          <div
+            class="seccion-personajes"
+            data-inicio="12"
+            data-fin="17"
+            data-seccion="3"
+          >
+            Personajes del 12 al 17
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div id="infoSeccion1" class="info-seccion">
+            <h4>Personajes del 1 al 5</h4>
+            <p>Personajes principales de la película.</p>
+          </div>
+          <div id="infoSeccion2" class="info-seccion">
+            <h4>Personajes del 6 al 11</h4>
+            <p>Personajes secundarios importantes.</p>
+          </div>
+          <div id="infoSeccion3" class="info-seccion">
+            <h4>Personajes del 12 al 17</h4>
+            <p>Otros personajes relevantes.</p>
+          </div>
+          <div id="infoPersonajes" class="row"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Audio para efectos de sonido -->
+    <audio id="lightsaberMp3" src="assets/sonidos/lightsaber.mp3"></audio>
+  </body>
+</html>
