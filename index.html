@@ -59,7 +59,11 @@
     </div>
 
     <!-- Audio para efectos de sonido -->
-    <audio id="lightsaberMp3" src="assets/sonidos/lightsaber.mp3"></audio>
+    
+    <audio id="lightsaberMp3" preload="auto">
+      <source src="./assets/sounds/lightsaber.mp3" type="audio/mpeg">
+      Tu navegador no soporta el elemento de audio.
+  </audio>
     <script src="./assets/js/script.js"></script>
   </body>
 </html>
