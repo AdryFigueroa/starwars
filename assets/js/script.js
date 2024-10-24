@@ -1,102 +1,57 @@
-// Elementos del DOM
-const infoPersonajes = document.getElementById("infoPersonajes");
-const secciones = document.querySelectorAll(".seccion-personajes");
-const lightsaberMp3 = document.getElementById("lightsaberMp3");
-
-// Configuración inicial del audio
-if (!lightsaberMp3) {
-    console.error("No se encontró el elemento de audio");
-} else {
-    lightsaberMp3.volume = 1.0;
-    lightsaberMp3.load();
+// Generar estrellas
+const starsContainer = document.querySelector('.stars');
+for (let i = 0; i < 200; i++) { // Aumentado el número de estrellas
+    const star = document.createElement('div');
+    star.className = 'star';
+    star.style.top = `${Math.random() * 100}%`;
+    star.style.left = `${Math.random() * 100}%`;
+    star.style.animationDelay = `${Math.random() * 3}s`;
+    starsContainer.appendChild(star);
 }
-
-// Manejador de errores de audio
-lightsaberMp3.addEventListener('error', function(e) {
-    console.error('Error loading audio:', e);
-});
-
-// Función para reproducir el sonido del sable de luz
-function playLightsaberSound() {
-    try {
-        lightsaberMp3.currentTime = 0;
-        const playPromise = lightsaberMp3.play();
-
-        if (playPromise !== undefined) {
-            playPromise.catch(error => {
-                console.error("Error reproduciendo audio:", error);
-            });
-        }
-    } catch (error) {
-        console.error("Error en reproducción:", error);
-    }
-}
-
-// Función para obtener personajes desde la API
-async function obtenerPersonaje(id) {
-    try {
-        const response = await fetch(`https://swapi.dev/api/people/${id}/`);
-        const datos = await response.json();
-        return {
-            nombre: datos.name,
-            altura: datos.height,
-            peso: datos.mass,
-            imagen: `assets/img/${datos.name.toLowerCase().replace(/ /g, "-")}.png`,
-        };
-    } catch (error) {
-        console.error("Error al obtener personaje:", error);
-        return null;
-    }
-}
-
-// Función para mostrar personajes
-async function mostrarPersonajes(inicio, fin) {
-    infoPersonajes.innerHTML = "";
-    let personajesMostrados = 0;
-
-    for (let i = inicio; i <= fin && personajesMostrados < 5; i++) {
-        const personaje = await obtenerPersonaje(i);
-        if (personaje) {
-            const divPersonaje = document.createElement("div");
-            divPersonaje.className = "col-md-6 mb-4";
-            divPersonaje.innerHTML = `
-                <div class="tarjeta-personaje">
-                    <div class="imagen-personaje">
-                        <img src="${personaje.imagen}" alt="${personaje.nombre}">
-                    </div>
-                    <h4>${personaje.nombre}</h4>
-                    <p>Altura: ${personaje.altura} cm</p>
-                    <p>Peso: ${personaje.peso} kg</p>
-                </div>
-            `;
-            infoPersonajes.appendChild(divPersonaje);
-            personajesMostrados++;
-        }
-    }
-}
-
-// Configuración de eventos para las secciones
-secciones.forEach((seccion) => {
-    // Evento al pasar el mouse por encima
-    seccion.addEventListener("mouseenter", () => {
-        const inicio = parseInt(seccion.dataset.inicio);
-        const fin = parseInt(seccion.dataset.fin);
-        mostrarPersonajes(inicio, fin);
-
-        // Mostrar la sección correspondiente y ocultar las demás
-        document.querySelectorAll(".info-seccion").forEach((info) => {
-            info.style.display = "none";
-        });
-        document.getElementById(`infoSeccion${seccion.dataset.seccion}`).style.display = "block";
-    });
-
-    // Evento al hacer click (reproduce el sonido)
-    seccion.addEventListener("click", () => {
-        playLightsaberSound();
+// Manejo de personajes
+document.querySelectorAll(".rango").forEach(rango => {
+    rango.addEventListener("mouseenter", function () {
+        const range = this.getAttribute("data-range");
+        const [start, end] = range.split('-').map(Number);
+        obtenerPersonajes(this, start, end);
     });
 });
-
-// Manejar errores generales
-window.addEventListener('error', function(e) {
-    console.error('Error general en la página:', e.message);
-});
+async function obtenerPersonajes(section, start, end) {
+    const container = section.querySelector('.personajes-container');
+    if (section.getAttribute("isLoading") === "true") {
+        return;
+    }
+    let characterNumber = section.getAttribute("characterNumber") || start;
+    section.setAttribute("isLoading", true);
+    for (let i = start; i <= end; i++) {
+        if (characterNumber == i) {
+            try {
+                const response = await fetch(`https://swapi.dev/api/people/${i}/`);
+                const personaje = await response.json();
+                mostrarPersonaje(container, personaje);
+                section.setAttribute("characterNumber", i + 1);
+            } catch (error) {
+                console.error('Error obteniendo personaje:', error);
+            }
+        }
+    }
+    section.setAttribute("isLoading", false);
+}
+function mostrarPersonaje(container, personaje) {
+    const div = document.createElement('div');
+    div.classList.add('personaje-card');
+    const imageName = personaje.name.toLowerCase()
+        .replace(/ /g, "-")
+        .replace(/[\'\"]/g, "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^\w-]/g, "");
+    const imagePath = `assets/img/${imageName}.png`;
+    div.innerHTML = `
+    <div class="personaje-image" style="background-image: url('${imagePath}');"></div>
+    <h2>${personaje.name}</h2>
+    <p><strong>Estatura:</strong> ${personaje.height} cm</p>
+    <p><strong>Peso:</strong> ${personaje.mass} kg</p>
+  `;
+    container.appendChild(div);
+}
